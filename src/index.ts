@@ -1,15 +1,28 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `wrangler dev src/index.ts` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `wrangler publish src/index.ts --name my-worker` to publish your worker
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import { Router } from "itty-router";
+import { returnIssueInfo } from "./clients/linearClient";
+import { returnTaskInfo } from "./clients/todoistClient";
 
-export default {
-  async fetch(request: Request): Promise<Response> {
-    return new Response("Hello World!");
-  },
-};
+const router = Router();
+
+router
+  .post("/ingest/linear", async (request) => {
+    return new Response(await returnIssueInfo(request));
+  })
+  .post("/ingest/todoist", async (request) => {
+    return new Response(await returnTaskInfo(request));
+  });
+
+/*
+This is the last route we define, it will match anything that hasn't hit a route we've defined
+above, therefore it's useful as a 404 (and avoids us hitting worker exceptions, so make sure to include it!).
+Visit any page that doesn't exist (e.g. /foobar) to see it in action.
+*/
+router.all("*", () => new Response("404, not found!", { status: 404 }));
+
+/*
+This snippet ties our worker to the router we deifned above, all incoming requests
+are passed to the router where your routes are called and the response is sent.
+*/
+addEventListener("fetch", (e) => {
+  e.respondWith(router.handle(e.request));
+});
