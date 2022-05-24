@@ -35,7 +35,7 @@ export async function addTask(taskName: string) {
 
   console.log(await response.body);
   const body = await response.json();
-  return JSON.stringify(body);
+  return body;
 }
 
 export interface TaskInfo {

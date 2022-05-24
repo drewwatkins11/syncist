@@ -4,9 +4,7 @@ Syncist is a tool for keeping Linear and Todoist in sync; enabling teams to mana
 
 ## Infrastructure
 
-This is designed to be a simple tool that can easily be replicated across teams.
-
-To create an extensible data environment, this uses Prisma as an ORM. For this initial proof-of-concept, this will be connected to a MySQL database running on Planetscale.
+This is designed to be a simple tool that can easily be replicated across teams. Syncist is using Supabase for the database to enable teams to easily spin up a new environment.
 
 All hosting and functions are being built to run on Cloudflare Workers.
 
@@ -37,7 +35,7 @@ All hosting and functions are being built to run on Cloudflare Workers.
 
 # Setup
 
-1. Use Prisma to deploy database on preferred provider
+1. Set up Supabase environment
 2. Deploy worker script to Cloudflare using Wrangler CLI
 3. Create Todoist application
 4. Obtain Todoist token and add to secrets

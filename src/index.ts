@@ -1,13 +1,18 @@
 import { Router } from "itty-router";
-import { returnIssueInfo } from "./clients/linearClient";
 import { returnTaskInfo } from "./clients/todoistClient";
 import { processLinearTask } from "./processLinearTask";
+import { createClient } from "@supabase/supabase-js";
+
+// @ts-ignore
+const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY, {
+  fetch: fetch.bind(globalThis),
+});
 
 const router = Router();
 
 router
   .post("/ingest/linear", async (request: Request) => {
-    const response = await processLinearTask(request);
+    const response = await processLinearTask(request, supabase);
     // @ts-ignore
     return new Response(response);
   })
