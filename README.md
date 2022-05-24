@@ -34,3 +34,13 @@ All hosting and functions are being built to run on Cloudflare Workers.
 3. Oauth login for Todoist
 4. Select Linear team
 5. Select Todoist project
+
+# Setup
+
+1. Use Prisma to deploy database on preferred provider
+2. Deploy worker script to Cloudflare using Wrangler CLI
+3. Create Todoist application
+4. Obtain Todoist token and add to secrets
+5. Obtain Linear token and add to secrets
+6. Set up Todoist webhook
+7. Set up Linear webhook

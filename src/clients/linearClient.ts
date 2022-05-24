@@ -2,6 +2,7 @@ export async function getMyIssues() {
   const response = await fetch("https://api.linear.app/graphql", {
     body: '{ "query": "{ issues { nodes { id title } } }" }',
     headers: {
+      // @ts-ignore
       Authorization: LINEAR_API_KEY,
       "Content-Type": "application/json",
     },
@@ -13,9 +14,10 @@ export async function getMyIssues() {
   return JSON.stringify(body);
 }
 
-export async function returnIssueInfo(request) {
-  const body = await request.json();
-  const info = {
+export async function returnIssueInfo(request: Request) {
+  const body: any = await request.json();
+  const info: IssueInfo = {
+    action: body.action,
     id: body.data.id,
     title: body.data.title,
     priorityLabel: body.data.priorityLabel,
@@ -27,4 +29,18 @@ export async function returnIssueInfo(request) {
   };
   console.log(info);
   return info;
+}
+
+export interface IssueInfo {
+  action: string;
+  id: string;
+  title: string;
+  priorityLabel?: string;
+  assigneeId?: string;
+  state: IssueInfoState;
+}
+
+interface IssueInfoState {
+  name: string;
+  type: string;
 }

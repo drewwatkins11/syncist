@@ -1,6 +1,7 @@
-name = "syncist"
-main = "src/index.ts"
 compatibility_date = "2022-05-21"
+main = "src/index.ts"
+name = "syncist"
 
 # [secrets]
 # LINEAR_API_KEY
+# TODOIST_API_KEY

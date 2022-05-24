@@ -1,14 +1,18 @@
 import { Router } from "itty-router";
 import { returnIssueInfo } from "./clients/linearClient";
 import { returnTaskInfo } from "./clients/todoistClient";
+import { processLinearTask } from "./processLinearTask";
 
 const router = Router();
 
 router
-  .post("/ingest/linear", async (request) => {
-    return new Response(await returnIssueInfo(request));
+  .post("/ingest/linear", async (request: Request) => {
+    const response = await processLinearTask(request);
+    // @ts-ignore
+    return new Response(response);
   })
-  .post("/ingest/todoist", async (request) => {
+  .post("/ingest/todoist", async (request: Request) => {
+    // @ts-ignore
     return new Response(await returnTaskInfo(request));
   });
 

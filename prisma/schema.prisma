@@ -18,19 +18,22 @@ model User {
   name       String?
   teamId     Int?
   team       Team?   @relation(fields: [teamId], references: [id])
-  todoistUid Int?
+  todoistUid Int?    @db.UnsignedInt
   linearUid  String?
 }
 
 model Team {
-  id               Int      @id @default(autoincrement())
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  name             String
-  active           Boolean  @default(true)
-  users            User[]
-  todoistProjectId Int?
-  linearProjectId  String?  @unique
+  id                   Int      @id @default(autoincrement())
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  name                 String
+  active               Boolean  @default(true)
+  users                User[]
+  todoistProjectId     Int?     @db.UnsignedInt
+  todoistLabelId       Int?     @db.UnsignedInt
+  linearTeamId         String?  @unique
+  linearInitialStateId String?
+  linearFinalStateId   String?
 }
 
 model Task {
@@ -39,6 +42,6 @@ model Task {
   active        Boolean
   completed     Boolean
   completedAt   DateTime?
-  todoistTaskId Int
-  linearTaskId  String
+  todoistTaskId Int       @unique @db.UnsignedInt
+  linearTaskId  String    @unique
 }
