@@ -1,3 +1,5 @@
+import { Task } from "../types/database";
+
 const urlBase = "https://api.todoist.com/rest/v1";
 const headers = {
   // @ts-ignore
@@ -33,8 +35,17 @@ export async function addTask(taskName: string) {
     body: JSON.stringify(task),
   });
 
-  console.log(await response.body);
   const body = await response.json();
+  return body;
+}
+
+export async function completeTask(taskId: Task["todoist_task_id"]) {
+  const response = await fetch(`${urlBase}/tasks/${taskId}/close`, {
+    headers,
+    method: "POST",
+  });
+
+  const body = await response.body;
   return body;
 }
 
