@@ -50,7 +50,12 @@ export async function completeTask(taskId: Task["todoist_task_id"]) {
 }
 
 export interface TaskInfo {
-  eventName: string;
+  eventName:
+    | "item:added"
+    | "item:completed"
+    | "item:uncompleted"
+    | "item:updated"
+    | "item:deleted";
   taskId: number;
   content?: string;
   projectId?: number | null;

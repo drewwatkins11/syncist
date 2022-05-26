@@ -2,6 +2,8 @@ import { Router } from "itty-router";
 import { returnTaskInfo } from "./clients/todoistClient";
 import { processLinearTask } from "./processLinearTask";
 import { createClient } from "@supabase/supabase-js";
+import { markIssueComplete } from "./clients/linearClient";
+import { processTodoistTask } from "./processTodoistTask";
 
 // @ts-ignore
 const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY, {
@@ -17,8 +19,9 @@ router
     return new Response(response);
   })
   .post("/ingest/todoist", async (request: Request) => {
+    const response = await processTodoistTask(request, supabase);
     // @ts-ignore
-    return new Response(await returnTaskInfo(request));
+    return new Response(response);
   });
 
 /*

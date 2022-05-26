@@ -1,17 +1,53 @@
-export async function getMyIssues() {
-  const response = await fetch("https://api.linear.app/graphql", {
-    body: '{ "query": "{ issues { nodes { id title } } }" }',
-    headers: {
-      // @ts-ignore
-      Authorization: LINEAR_API_KEY,
-      "Content-Type": "application/json",
-    },
-    method: "POST",
+import gql from "graphql-tag";
+import { Team } from "../types/database";
+
+const url = "https://api.linear.app/graphql";
+const headers = {
+  // @ts-ignore
+  Authorization: LINEAR_API_KEY,
+  "Content-Type": "application/json",
+};
+const method = "POST";
+
+const client = async (body: string) => {
+  // @ts-ignore
+  const response = await fetch(url, {
+    body,
+    headers,
+    method,
   });
 
-  const body = await response.json();
-  console.log(body);
-  return JSON.stringify(body);
+  return response.json();
+};
+
+export async function getMyIssues() {
+  const body = '{ "query": "{ issues { nodes { id title } } }" }';
+
+  const response = client(body);
+  return response;
+}
+
+export async function markIssueComplete(
+  issueId: IssueInfo["id"],
+  finalStateId: Team["linear_final_state_id"]
+) {
+  const body = JSON.stringify({
+    query: `
+      mutation IssueUpdate($id: String!, $stateId: String!) {
+        issueUpdate(id: $id, input: { stateId: $stateId }) {
+          success
+        }
+      }
+    `,
+    variables: {
+      id: issueId,
+      stateId: finalStateId,
+    },
+  });
+
+  const response: any = await client(body);
+  const success = response?.data?.issueUpdate?.success;
+  return success;
 }
 
 export async function returnIssueInfo(request: Request) {
@@ -27,7 +63,6 @@ export async function returnIssueInfo(request: Request) {
       type: body.data.state.type,
     },
   };
-  console.log(info);
   return info;
 }
 

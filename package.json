@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^1.35.3",
+    "graphql": "^16.5.0",
+    "graphql-tag": "^2.12.6",
     "itty-router": "^2.6.1",
     "itty-router-extras": "^0.4.2"
   }
