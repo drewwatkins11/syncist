@@ -51,6 +51,29 @@ export async function markIssueComplete(
   return success;
 }
 
+export async function addCommentToIssue(
+  issueId: IssueInfo["id"],
+  commentBody: string
+) {
+  const body = JSON.stringify({
+    query: `
+      mutation IssueUpdate($issueId: String!, $body: String!) {
+        commentCreate(input: {body: $body, issueId: $issueId}) {
+          success
+        }
+      }
+    `,
+    variables: {
+      issueId,
+      body: commentBody,
+    },
+  });
+
+  const response: any = await client(body);
+  const success = response?.data?.issueUpdate?.success;
+  return success;
+}
+
 export async function returnIssueInfo(request: Request) {
   const body: any = await request.json();
   const info: IssueInfo = {

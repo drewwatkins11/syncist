@@ -1,4 +1,5 @@
-import { markIssueComplete } from "./clients/linearClient";
+import { getTaskFromDb } from "./clients/dbClient";
+import { addCommentToIssue, markIssueComplete } from "./clients/linearClient";
 import { returnTaskInfo, TaskInfo } from "./clients/todoistClient";
 import { Task, Team } from "./types/database";
 
@@ -23,16 +24,42 @@ export async function processTodoistTask(issue: Request, db: any) {
   } else return "Team Not Found.";
 
   switch (info.eventName) {
-    case "item:completed":
+    case "item:deleted": {
+      console.log("task deleted in Todoist");
+      // Check if task is tracked
+      const task = await getTaskFromDb("todoist", info.taskId, db);
+
+      if (task) {
+        const { data, error } = await db
+          .from("task")
+          .update({ active: false })
+          .match({ id: task.id });
+
+        if (error) {
+          console.log(error);
+          throw new Error(error);
+        }
+
+        await addCommentToIssue(
+          task.linear_task_id,
+          "Issue deleted from Todoist. Updates will no longer be synced."
+        );
+
+        return {
+          task: data["0"],
+          success: true,
+          message: "Task deletion status synced",
+        };
+      }
+
+      return;
+    }
+    case "item:completed": {
       console.log("completing task");
       // If task completed in Todoist, check if task is tracked
-      const { data: task }: { data: Task } = await db
-        .from("task")
-        .select()
-        .eq("todoist_task_id", info.taskId)
-        .maybeSingle();
+      const task = await getTaskFromDb("todoist", info.taskId, db);
 
-      console.log(task);
+      console.log("task", task);
 
       // If not completed, mark done in Linear
       if (team?.linear_final_state_id && task && !task.completed) {
@@ -60,6 +87,7 @@ export async function processTodoistTask(issue: Request, db: any) {
         }
       }
       break;
+    }
     default:
       return null;
   }
