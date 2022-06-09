@@ -1,4 +1,8 @@
-import { IssueInfo, returnIssueInfo } from "./clients/linearClient";
+import {
+  addCommentToIssue,
+  IssueInfo,
+  returnIssueInfo,
+} from "./clients/linearClient";
 import { addTask, completeTask, updateTask } from "./clients/todoistClient";
 import { Task } from "./types/database";
 
@@ -23,6 +27,11 @@ export async function processLinearTask(issue: Request, db: any) {
           console.error("error adding task to database", error);
           return error;
         }
+
+        await addCommentToIssue(
+          info.id,
+          "This issue is being tracked in Todoist."
+        );
 
         return data[0];
       }
@@ -62,7 +71,7 @@ export async function processLinearTask(issue: Request, db: any) {
         }
       } else {
         // update task in Todoist
-        const completed = await updateTask(task.todoist_task_id, {
+        const updated = await updateTask(task.todoist_task_id, {
           content: info.title,
           due_date: info.dueDate || null,
         }).catch((err) => {
@@ -70,8 +79,8 @@ export async function processLinearTask(issue: Request, db: any) {
           throw new Error(`Unable to update task in Todoist: ${err}`);
         });
 
-        console.log(completed);
-        return completed;
+        console.log(updated);
+        return updated;
       }
       break;
     default:
