@@ -1,8 +1,6 @@
 import { Router } from "itty-router";
-import { returnTaskInfo } from "./clients/todoistClient";
 import { processLinearTask } from "./processLinearTask";
 import { createClient } from "@supabase/supabase-js";
-import { markIssueComplete } from "./clients/linearClient";
 import { processTodoistTask } from "./processTodoistTask";
 
 // @ts-ignore

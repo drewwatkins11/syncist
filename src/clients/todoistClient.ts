@@ -1,4 +1,6 @@
+import config from "../../config";
 import { Task } from "../types/database";
+import { DateYMDString } from "../types/dates";
 
 const urlBase = "https://api.todoist.com/rest/v1";
 const headers = {
@@ -23,10 +25,11 @@ export async function returnTaskInfo(request: Request) {
   return info;
 }
 
-export async function addTask(taskName: string) {
+export async function addTask(taskName: string, dueDate?: Due["date"]) {
   const task = {
     content: taskName,
-    project_id: 2291956402,
+    project_id: config.todoistProject,
+    due_date: dueDate || null,
   };
 
   const response = await fetch(`${urlBase}/tasks`, {
@@ -49,6 +52,20 @@ export async function completeTask(taskId: Task["todoist_task_id"]) {
   return body;
 }
 
+export async function updateTask(
+  taskId: Task["todoist_task_id"],
+  taskInfo: { content?: TaskInfo["content"]; due_date?: Due["date"] }
+) {
+  const response = await fetch(`${urlBase}/tasks/${taskId}`, {
+    headers,
+    method: "POST",
+    body: JSON.stringify(taskInfo),
+  });
+
+  const body = await response.body;
+  return body;
+}
+
 export interface TaskInfo {
   eventName:
     | "item:added"
@@ -62,6 +79,14 @@ export interface TaskInfo {
   completed: boolean;
   labels?: string[];
   priority?: 1 | 2 | 3 | 4;
-  dueDate?: Date | null;
+  dueDate?: Due | null;
   assignee?: number | null;
+}
+
+interface Due {
+  date: DateYMDString | null;
+  datetime?: string;
+  recurring: boolean;
+  string: string;
+  timezone?: string;
 }

@@ -1,14 +1,11 @@
 import { markIssueComplete } from "./clients/linearClient";
-import {
-  completeTask,
-  returnTaskInfo,
-  TaskInfo,
-} from "./clients/todoistClient";
+import { returnTaskInfo, TaskInfo } from "./clients/todoistClient";
 import { Task, Team } from "./types/database";
 
 export async function processTodoistTask(issue: Request, db: any) {
   console.log("processing Todoist task");
   const info: TaskInfo = await returnTaskInfo(issue);
+  console.log(info);
 
   let team: Team | undefined;
 

@@ -1,5 +1,6 @@
 import gql from "graphql-tag";
 import { Team } from "../types/database";
+import { DateYMDString } from "../types/dates";
 
 const url = "https://api.linear.app/graphql";
 const headers = {
@@ -58,6 +59,7 @@ export async function returnIssueInfo(request: Request) {
     title: body.data.title,
     priorityLabel: body.data.priorityLabel,
     assigneeId: body.data.assigneeId,
+    dueDate: body.data.dueDate,
     state: {
       name: body.data.state.name,
       type: body.data.state.type,
@@ -72,6 +74,7 @@ export interface IssueInfo {
   title: string;
   priorityLabel?: string;
   assigneeId?: string;
+  dueDate: DateYMDString | null;
   state: IssueInfoState;
 }
 
